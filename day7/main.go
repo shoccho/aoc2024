@@ -2,12 +2,55 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/shoccho/aoc2024/utils"
 )
+
+func geta(x, y int) int {
+	if x == 0 || y == 0 {
+		return 0
+	} else if x < 10 {
+		return y * 10
+	} else if x < 100 {
+		return y * 100
+	} else if x < 1000 {
+		return y * 1000
+	} else if x < 10000 {
+		return y * 10000
+	} else if x < 100000 {
+		return y * 100000
+	} else if x < 1000000 {
+		return y * 1000000
+	} else if x < 10000000 {
+		return y * 10000000
+	} else if x < 100000000 {
+		return y * 100000000
+	} else if x < 1000000000 {
+		return y * 1000000000
+	} else if x < 10000000000 {
+		return y * 10000000000
+	} else if x < 100000000000 {
+		return y * 100000000000
+	} else if x < 1000000000000 {
+		return y * 1000000000000
+	} else if x < 10000000000000 {
+		return y * 10000000000000
+	} else if x < 100000000000000 {
+		return y * 100000000000000
+	} else if x < 1000000000000000 {
+		return y * 1000000000000000
+	} else if x < 10000000000000000 {
+		return y * 10000000000000000
+	} else if x < 100000000000000000 {
+		return y * 100000000000000000
+	} else if x < 1000000000000000000 {
+		return y * 1000000000000000000
+	}
+	return -1
+}
 
 func try(numbers []int, target int, current int, index int, part2 bool) bool {
 	if index == len(numbers) {
@@ -30,9 +73,7 @@ func try(numbers []int, target int, current int, index int, part2 bool) bool {
 }
 
 func merge(a, b int) int {
-	l := int(math.Log10(float64(b)))
-
-	return a*int(math.Pow10(l+1)) + b
+	return geta(b, a) + b
 }
 
 func processInput(fileName string) ([]int, [][]int) {
@@ -60,31 +101,65 @@ func processInput(fileName string) ([]int, [][]int) {
 	return targets, allNums
 }
 
-func part1() {
-	targets, allnums := processInput("input")
+func part1() int64 {
+	targets, allNums := processInput("input")
 	var sum int64 = 0
+	var wg sync.WaitGroup
+	results := make(chan int64, len(targets))
+
 	for i, target := range targets {
-		nums := allnums[i]
-		if try(nums, target, nums[0], 1, false) {
-			sum += int64(target)
-		}
+		wg.Add(1)
+		go func(target int, nums []int) {
+			defer wg.Done()
+			if try(nums, target, nums[0], 1, false) {
+				results <- int64(target)
+			} else {
+				results <- 0
+			}
+		}(target, allNums[i])
 	}
-	fmt.Println("part 1: ", sum)
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	for result := range results {
+		sum += result
+	}
+	return sum
 }
 
-func part2() {
-	targets, allnums := processInput("input")
+func part2() int64 {
+	targets, allNums := processInput("input")
 	var sum int64 = 0
+	var wg sync.WaitGroup
+	results := make(chan int64, len(targets))
+
 	for i, target := range targets {
-		nums := allnums[i]
-		if try(nums, target, nums[0], 1, true) {
-			sum += int64(target)
-		}
+		wg.Add(1)
+		go func(target int, nums []int) {
+			defer wg.Done()
+			if try(nums, target, nums[0], 1, true) {
+				results <- int64(target)
+			} else {
+				results <- 0
+			}
+		}(target, allNums[i])
 	}
-	fmt.Println("part 2: ", sum)
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	for result := range results {
+		sum += result
+	}
+	return sum
 }
 
 func main() {
-	part1()
-	part2()
+	fmt.Println("part 1: ", part1())
+	fmt.Println("part 2: ", part2())
 }
