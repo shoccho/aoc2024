@@ -2,6 +2,7 @@ package utils
 
 import (
 	"os"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -15,9 +16,18 @@ func ReadFile(fileName string) string {
 }
 
 func ReadLines(fileName string) []string {
-	lines := strings.Split(ReadFile(fileName), "\n")
+	os := runtime.GOOS
+	splitBy := "\n"
+	if os == "windows" {
+		splitBy = "\r\n"
+	}
+
+	lines := strings.Split(ReadFile(fileName), splitBy)
 	n := len(lines)
-	return lines[0:n]
+	if lines[n-1] == "" {
+		return lines[:n-1]
+	}
+	return lines
 }
 
 func MeasureAvgRuntime(fn func(), iterations int) time.Duration {

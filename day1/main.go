@@ -6,6 +6,8 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/shoccho/aoc2024/utils"
 )
 
 func readFile(fileName string) string {
@@ -24,8 +26,7 @@ func dist(a, b int) int {
 }
 
 func part2() {
-	input := readFile("./input")
-	lines := strings.Split(input, "\n")
+	lines := utils.ReadLines("input")
 	n := len(lines)
 	left, right := make([]int, n), make([]int, 100000) // a hashmap would have been the correct choice
 	for i, line := range lines {
@@ -53,8 +54,7 @@ func part2() {
 }
 
 func part1() {
-	input := readFile("./input")
-	lines := strings.Split(input, "\n")
+	lines := utils.ReadLines("input")
 	n := len(lines)
 	left, right := make([]int, n), make([]int, n)
 
