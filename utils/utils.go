@@ -15,14 +15,18 @@ func ReadFile(fileName string) string {
 	return string(b)
 }
 
-func ReadLines(fileName string) []string {
+func GetEndl() string {
 	os := runtime.GOOS
 	splitBy := "\n"
 	if os == "windows" {
 		splitBy = "\r\n"
 	}
+	return splitBy
+}
 
-	lines := strings.Split(ReadFile(fileName), splitBy)
+func ReadLines(fileName string) []string {
+
+	lines := strings.Split(ReadFile(fileName), GetEndl())
 	n := len(lines)
 	if lines[n-1] == "" {
 		return lines[:n-1]
